@@ -18,7 +18,7 @@ class TasksController extends Controller
         $data = [];
         if (\Auth::check()) {
             $user = \Auth::user();
-            $tasks = $user->task()->orderBy('created_at', 'desc')->get();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->get();
             
             $data = [
                 'user' => $user,
@@ -109,9 +109,11 @@ class TasksController extends Controller
         
         if (\Auth::id() === $task->user_id) {
 
-        return view('tasks.edit', [
-            'task' => $task,
-        ]);
+            return view('tasks.edit', [
+                'task' => $task,
+            ]);
+        }
+        return redirect('/');
     }
 
     /**
@@ -127,15 +129,17 @@ class TasksController extends Controller
             'content' => 'required|max:191',
             'status' => 'required|max:10',
         ]);
-        $task = Task::find($id);
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
+        
+     $task = Task::find($id);
 
         if (\Auth::id() === $task->user_id) {
-            
+            $task->content = $request->content;
+            $task->status = $request->status;
+            $task->save();   
+        }         
         return redirect('/');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -146,10 +150,10 @@ class TasksController extends Controller
     public function destroy($id)
     {
         $task = Task::find($id);
-        $task->delete();
         
         if (\Auth::id() === $task->user_id) {
-
+               $task->delete();
+        }
         return redirect('/');
     }
 }
