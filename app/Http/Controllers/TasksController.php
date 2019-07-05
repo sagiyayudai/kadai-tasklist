@@ -64,7 +64,7 @@ class TasksController extends Controller
             'status' => 'required|max:10',
         ]);
         
-        $request->user()->task()->create([
+        $request->user()->tasks()->create([
             'content' => $request->content,
             'status' => $request->status,
         ]);
